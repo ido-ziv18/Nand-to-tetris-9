@@ -37,6 +37,10 @@ class Board {
         return board[row][col];
     }
 
+    method int getSize() {
+        return this.size;
+    }
+
 
     /** clears the board. sets all squares to false */
     method void clear() {
