@@ -3,13 +3,27 @@ class NonogramGame {
     static Board board;
     function void initGame() {
         // draw something to solution
+        let solution = Board.new(10);
+        do solution.setSquare(0, 0, true);
+        do solution.setSquare(0, 1, true);
+        do solution.setSquare(0, 2, true);
+        do solution.setSquare(0, 3, true);
+        do solution.setSquare(0, 4, true);
+        do solution.setSquare(0, 5, true);
+        do solution.setSquare(0, 6, true);
+        do solution.setSquare(0, 7, true);
+        do solution.setSquare(0, 8, true);
+        do solution.setSquare(0, 9, true);
+        do GraphicsManager.initRenderBoard(solution);
         // write constraints
         return;
     }
 
     function void run() {
-        // inifinite loop
+        do NonogramGame.initGame();
+        while (true) {
 
+        }
         return;
     }
 }
