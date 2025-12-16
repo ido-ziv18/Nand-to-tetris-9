@@ -1,7 +1,7 @@
 class Main {
     function void main() {
-        var NonogramGame game;
-        do game.initGame();
-        do game.run();
+        do NonogramGame.initGame();
+        do NonogramGame.run();
+        return;
     }
 }
