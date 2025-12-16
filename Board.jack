@@ -1,22 +1,30 @@
 class Board {
     field Array board;
     field int size;
-    constructor Board new(int _size) {
-        let size = _size;
+    constructor Board new(int size_) {
+        let size = size_;
         let board = Array.new(size);
-        var int rowIndex = 0;
+        do createBoard();
+        return this;
+    }
+
+    method void createBoard() {
+        var int rowIndex;
+        var int colIndex;
+        var Array row;
+        
+        let rowIndex = 0;
         while (rowIndex < size) {
             let row = Array.new(size);
-            var int colIndex;
             let colIndex = 0;
             while (colIndex < size) {
                 let row[colIndex] = false;
-                colIndex = colIndex + 1;
+                let colIndex = colIndex + 1;
             }
             let board[rowIndex] = row;
-            rowIndex = rowIndex + 1; 
+            let rowIndex = rowIndex + 1; 
         }
-        return this;
+        return;
     }
 
     method void validateSquare(int row, int col) {
@@ -27,30 +35,34 @@ class Board {
     }
 
     method void setSquare(int row, int col, boolean color) {
-        do this.validateSquare();
-        let board[row][col] = color;
+        var Array rowArray;
+        do validateSquare(row, col);
+        let rowArray = board[row];
+        let rowArray[col] = color;
         return;
     }
 
     method boolean getSquare(int row, int col) {
-        do this.validateSquare();
-        return board[row][col];
+        var Array rowArray;
+        do validateSquare(row, col);
+        let rowArray = board[row];
+        return rowArray[col];
     }
 
     method int getSize() {
-        return this.size;
+        return size;
     }
 
 
     /** clears the board. sets all squares to false */
     method void clear() {
         var int rowIndex;
+        var int colIndex;
         let rowIndex = 0;
         while (rowIndex < size) {
-            var int colIndex;
             let colIndex = 0;
             while (colIndex < size) {
-                this.setSquare(rowIndex, colIndex, false);
+                do setSquare(rowIndex, colIndex, false);
                 let colIndex = colIndex + 1;
             }
             let rowIndex = rowIndex + 1;
@@ -60,11 +72,14 @@ class Board {
     }
 
     method void dispose() {
-        var int rowIndex = 0;
+        var int rowIndex;
+        var Array row;
+        
+        let rowIndex = 0;
         while (rowIndex < size) {
             let row = board[rowIndex];
-            Memory.deAlloc(row);
-            rowIndex = rowIndex + 1;
+            do Memory.deAlloc(row);
+            let rowIndex = rowIndex + 1;
         }
         
         do Memory.deAlloc(this);
