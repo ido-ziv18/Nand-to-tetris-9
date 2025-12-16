@@ -1,0 +1,125 @@
+class DigitRenderer {
+    
+    /** Draws a single digit (0-9) at position (x, y) with size 6x10 pixels */
+    function void drawDigit(int x, int y, int digit) {
+        do Screen.setColor(true);  // black
+        
+        if (digit = 0) {
+            do Screen.drawRectangle(x, y, x + 5, y + 1);           // top
+            do Screen.drawRectangle(x, y, x + 1, y + 9);           // left
+            do Screen.drawRectangle(x + 4, y, x + 5, y + 9);       // right
+            do Screen.drawRectangle(x, y + 8, x + 5, y + 9);       // bottom
+        }
+        if (digit = 1) {
+            do Screen.drawRectangle(x + 2, y, x + 3, y + 9);       // center vertical
+            do Screen.drawRectangle(x, y + 8, x + 5, y + 9);       // bottom base
+            do Screen.drawRectangle(x + 1, y + 1, x + 2, y + 2);   // top serif
+        }
+        if (digit = 2) {
+            do Screen.drawRectangle(x, y, x + 5, y + 1);           // top
+            do Screen.drawRectangle(x + 4, y, x + 5, y + 4);       // right top
+            do Screen.drawRectangle(x, y + 4, x + 5, y + 5);       // middle
+            do Screen.drawRectangle(x, y + 4, x + 1, y + 9);       // left bottom
+            do Screen.drawRectangle(x, y + 8, x + 5, y + 9);       // bottom
+        }
+        if (digit = 3) {
+            do Screen.drawRectangle(x, y, x + 5, y + 1);           // top
+            do Screen.drawRectangle(x + 4, y, x + 5, y + 9);       // right
+            do Screen.drawRectangle(x, y + 4, x + 5, y + 5);       // middle
+            do Screen.drawRectangle(x, y + 8, x + 5, y + 9);       // bottom
+        }
+        if (digit = 4) {
+            do Screen.drawRectangle(x, y, x + 1, y + 5);           // left top
+            do Screen.drawRectangle(x + 4, y, x + 5, y + 9);       // right full
+            do Screen.drawRectangle(x, y + 4, x + 5, y + 5);       // middle
+        }
+        if (digit = 5) {
+            do Screen.drawRectangle(x, y, x + 5, y + 1);           // top
+            do Screen.drawRectangle(x, y, x + 1, y + 5);           // left top
+            do Screen.drawRectangle(x, y + 4, x + 5, y + 5);       // middle
+            do Screen.drawRectangle(x + 4, y + 4, x + 5, y + 9);   // right bottom
+            do Screen.drawRectangle(x, y + 8, x + 5, y + 9);       // bottom
+        }
+        if (digit = 6) {
+            do Screen.drawRectangle(x, y, x + 5, y + 1);           // top
+            do Screen.drawRectangle(x, y, x + 1, y + 9);           // left full
+            do Screen.drawRectangle(x, y + 4, x + 5, y + 5);       // middle
+            do Screen.drawRectangle(x + 4, y + 4, x + 5, y + 9);   // right bottom
+            do Screen.drawRectangle(x, y + 8, x + 5, y + 9);       // bottom
+        }
+        if (digit = 7) {
+            do Screen.drawRectangle(x, y, x + 5, y + 1);           // top
+            do Screen.drawRectangle(x + 4, y, x + 5, y + 9);       // right full
+        }
+        if (digit = 8) {
+            do Screen.drawRectangle(x, y, x + 5, y + 1);           // top
+            do Screen.drawRectangle(x, y, x + 1, y + 9);           // left
+            do Screen.drawRectangle(x + 4, y, x + 5, y + 9);       // right
+            do Screen.drawRectangle(x, y + 4, x + 5, y + 5);       // middle
+            do Screen.drawRectangle(x, y + 8, x + 5, y + 9);       // bottom
+        }
+        if (digit = 9) {
+            do Screen.drawRectangle(x, y, x + 5, y + 1);           // top
+            do Screen.drawRectangle(x, y, x + 1, y + 5);           // left top
+            do Screen.drawRectangle(x + 4, y, x + 5, y + 9);       // right full
+            do Screen.drawRectangle(x, y + 4, x + 5, y + 5);       // middle
+            do Screen.drawRectangle(x, y + 8, x + 5, y + 9);       // bottom
+        }
+        return;
+    }
+    
+    /** Draws a number at position (x, y). x is the LEFT edge of where the number starts. */
+    function void drawNumber(int x, int y, int number) {
+        var int digit;
+        var int remaining;
+        var int digitCount;
+        var int drawX;
+        var int temp;
+        
+        // Handle zero specially
+        if (number = 0) {
+            do DigitRenderer.drawDigit(x, y, 0);
+            return;
+        }
+        
+        // Count digits
+        let digitCount = 0;
+        let temp = number;
+        while (temp > 0) {
+            let digitCount = digitCount + 1;
+            let temp = temp / 10;
+        }
+        
+        // Draw from right to left
+        let remaining = number;
+        let drawX = x + ((digitCount - 1) * 7);  // rightmost digit position
+        
+        while (remaining > 0) {
+            let digit = remaining - ((remaining / 10) * 10);  // get last digit
+            do DigitRenderer.drawDigit(drawX, y, digit);
+            let remaining = remaining / 10;
+            let drawX = drawX - 7;  // move left (6 width + 1 gap)
+        }
+        return;
+    }
+    
+    /** Returns the width in pixels needed to draw a number */
+    function int getNumberWidth(int number) {
+        var int digitCount;
+        var int temp;
+        
+        if (number = 0) {
+            return 6;
+        }
+        
+        let digitCount = 0;
+        let temp = number;
+        while (temp > 0) {
+            let digitCount = digitCount + 1;
+            let temp = temp / 10;
+        }
+        
+        return ((digitCount * 6) + ((digitCount - 1) * 1));  // digits + gaps
+    }
+}
+

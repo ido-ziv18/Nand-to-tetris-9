@@ -86,4 +86,145 @@ class Board {
         do Memory.deAlloc(this);
         return;
     }
+    
+    /** Returns an array of constraint arrays for all rows.
+        Each constraint array contains the lengths of consecutive black squares. */
+    function Array getRowConstraints(Board board) {
+        var Array allConstraints;
+        var Array rowConstraint;
+        var int boardSize;
+        var int row;
+        var int col;
+        var int count;
+        var int constraintIndex;
+        var Array tempConstraints;
+        var int i;
+        
+        let boardSize = board.getSize();
+        let allConstraints = Array.new(boardSize);
+        let tempConstraints = Array.new(boardSize);  // max possible constraints per row
+        
+        let row = 0;
+        while (row < boardSize) {
+            // Scan row for consecutive black squares
+            let col = 0;
+            let count = 0;
+            let constraintIndex = 0;
+            
+            while (col < boardSize) {
+                if (board.getSquare(row, col)) {
+                    // Black square - increment count
+                    let count = count + 1;
+                } else {
+                    // White square - if we had a run, record it
+                    if (count > 0) {
+                        let tempConstraints[constraintIndex] = count;
+                        let constraintIndex = constraintIndex + 1;
+                        let count = 0;
+                    }
+                }
+                let col = col + 1;
+            }
+            
+            // Don't forget last run if row ends with black
+            if (count > 0) {
+                let tempConstraints[constraintIndex] = count;
+                let constraintIndex = constraintIndex + 1;
+            }
+            
+            // Store length at index 0, values starting at index 1
+            // If no black squares, constraint is [1, 0] (length=1, value=0)
+            if (constraintIndex = 0) {
+                let rowConstraint = Array.new(2);
+                let rowConstraint[0] = 1;  // length
+                let rowConstraint[1] = 0;  // value
+            } else {
+                // Copy to properly sized array with length at index 0
+                let rowConstraint = Array.new(constraintIndex + 1);
+                let rowConstraint[0] = constraintIndex;  // length
+                let i = 0;
+                while (i < constraintIndex) {
+                    let rowConstraint[i + 1] = tempConstraints[i];
+                    let i = i + 1;
+                }
+            }
+            
+            let allConstraints[row] = rowConstraint;
+            let row = row + 1;
+        }
+        
+        do Memory.deAlloc(tempConstraints);
+        return allConstraints;
+    }
+    
+    /** Returns an array of constraint arrays for all columns.
+        Each constraint array contains the lengths of consecutive black squares. */
+    function Array getColConstraints(Board board) {
+        var Array allConstraints;
+        var Array colConstraint;
+        var int boardSize;
+        var int row;
+        var int col;
+        var int count;
+        var int constraintIndex;
+        var Array tempConstraints;
+        var int i;
+        
+        let boardSize = board.getSize();
+        let allConstraints = Array.new(boardSize);
+        let tempConstraints = Array.new(boardSize);  // max possible constraints per col
+        
+        let col = 0;
+        while (col < boardSize) {
+            // Scan column for consecutive black squares
+            let row = 0;
+            let count = 0;
+            let constraintIndex = 0;
+            
+            while (row < boardSize) {
+                if (board.getSquare(row, col)) {
+                    // Black square - increment count
+                    let count = count + 1;
+                } else {
+                    // White square - if we had a run, record it
+                    if (count > 0) {
+                        let tempConstraints[constraintIndex] = count;
+                        let constraintIndex = constraintIndex + 1;
+                        let count = 0;
+                    }
+                }
+                let row = row + 1;
+            }
+            
+            // Don't forget last run if column ends with black
+            if (count > 0) {
+                let tempConstraints[constraintIndex] = count;
+                let constraintIndex = constraintIndex + 1;
+            }
+            
+            // Store length at index 0, values starting at index 1
+            // If no black squares, constraint is [1, 0] (length=1, value=0)
+            if (constraintIndex = 0) {
+                let colConstraint = Array.new(2);
+                let colConstraint[0] = 1;  // length
+                let colConstraint[1] = 0;  // value
+            } else {
+                // Copy to properly sized array with length at index 0
+                let colConstraint = Array.new(constraintIndex + 1);
+                let colConstraint[0] = constraintIndex;  // length
+                let i = 0;
+                while (i < constraintIndex) {
+                    let colConstraint[i + 1] = tempConstraints[i];
+                    let i = i + 1;
+                }
+            }
+            
+            let allConstraints[col] = colConstraint;
+            let col = col + 1;
+        }
+        
+        do Memory.deAlloc(tempConstraints);
+        return allConstraints;
+    }
+    
 }

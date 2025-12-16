@@ -5,10 +5,17 @@ class NonogramGame {
     static int cursorCol;
     static int boardSize;
     static int mismatchCount;
+    static Array rowConstraints;
+    static Array colConstraints;
+    static int currentPuzzle;  // 0-3, cycles through puzzles
     function void initGame() {
         // create solution and get initial mismatch count
         let mismatchCount = NonogramGame.createSolution();
         let boardSize = solution.getSize();
+        
+        // generate constraints from solution (once, stays fixed until win)
+        let rowConstraints = Board.getRowConstraints(solution);
+        let colConstraints = Board.getColConstraints(solution);
         
         // create empty player board
         let board = Board.new(boardSize);
@@ -16,11 +23,13 @@ class NonogramGame {
         // render the empty board (not solution)
         do GraphicsManager.initRenderBoard(board);
         
+        // render the constraints
+        do GraphicsManager.renderAllConstraints(rowConstraints, colConstraints, boardSize);
+        
         // initialize cursor at top-left
         let cursorRow = 0;
         let cursorCol = 0;
         do GraphicsManager.drawCursor(cursorRow, cursorCol, board.getSquare(cursorRow, cursorCol));
-        // write constraints (TODO: later)
         return;
     }
     
@@ -28,22 +37,263 @@ class NonogramGame {
     function int createSolution() {
         var int blackCount;
         
-        let solution = Board.new(10);
-        let blackCount = 0;
-        
-        // Set the pattern - first row all black
-        do solution.setSquare(0, 0, true); let blackCount = blackCount + 1;
-        do solution.setSquare(0, 1, true); let blackCount = blackCount + 1;
-        do solution.setSquare(0, 2, true); let blackCount = blackCount + 1;
-        do solution.setSquare(0, 3, true); let blackCount = blackCount + 1;
-        do solution.setSquare(0, 4, true); let blackCount = blackCount + 1;
-        do solution.setSquare(0, 5, true); let blackCount = blackCount + 1;
-        do solution.setSquare(0, 6, true); let blackCount = blackCount + 1;
-        do solution.setSquare(0, 7, true); let blackCount = blackCount + 1;
-        do solution.setSquare(0, 8, true); let blackCount = blackCount + 1;
-        do solution.setSquare(0, 9, true); let blackCount = blackCount + 1;
+        if (currentPuzzle = 0) { let blackCount = NonogramGame.createHeart(); }
+        if (currentPuzzle = 1) { let blackCount = NonogramGame.createSmiley(); }
+        if (currentPuzzle = 2) { let blackCount = NonogramGame.createCat(); }
+        if (currentPuzzle = 3) { let blackCount = NonogramGame.createSpaceship(); }
         
         return blackCount;
+    }
+    
+    /** Heart shape */
+    function int createHeart() {
+        var int c;
+        let solution = Board.new(10);
+        let c = 0;
+        // Row 0: ..XX..XX..
+        do solution.setSquare(0, 2, true); let c = c + 1;
+        do solution.setSquare(0, 3, true); let c = c + 1;
+        do solution.setSquare(0, 6, true); let c = c + 1;
+        do solution.setSquare(0, 7, true); let c = c + 1;
+        // Row 1: .XXXXXXXXX.
+        do solution.setSquare(1, 1, true); let c = c + 1;
+        do solution.setSquare(1, 2, true); let c = c + 1;
+        do solution.setSquare(1, 3, true); let c = c + 1;
+        do solution.setSquare(1, 4, true); let c = c + 1;
+        do solution.setSquare(1, 5, true); let c = c + 1;
+        do solution.setSquare(1, 6, true); let c = c + 1;
+        do solution.setSquare(1, 7, true); let c = c + 1;
+        do solution.setSquare(1, 8, true); let c = c + 1;
+        // Row 2: XXXXXXXXXX
+        do solution.setSquare(2, 0, true); let c = c + 1;
+        do solution.setSquare(2, 1, true); let c = c + 1;
+        do solution.setSquare(2, 2, true); let c = c + 1;
+        do solution.setSquare(2, 3, true); let c = c + 1;
+        do solution.setSquare(2, 4, true); let c = c + 1;
+        do solution.setSquare(2, 5, true); let c = c + 1;
+        do solution.setSquare(2, 6, true); let c = c + 1;
+        do solution.setSquare(2, 7, true); let c = c + 1;
+        do solution.setSquare(2, 8, true); let c = c + 1;
+        do solution.setSquare(2, 9, true); let c = c + 1;
+        // Row 3: XXXXXXXXXX
+        do solution.setSquare(3, 0, true); let c = c + 1;
+        do solution.setSquare(3, 1, true); let c = c + 1;
+        do solution.setSquare(3, 2, true); let c = c + 1;
+        do solution.setSquare(3, 3, true); let c = c + 1;
+        do solution.setSquare(3, 4, true); let c = c + 1;
+        do solution.setSquare(3, 5, true); let c = c + 1;
+        do solution.setSquare(3, 6, true); let c = c + 1;
+        do solution.setSquare(3, 7, true); let c = c + 1;
+        do solution.setSquare(3, 8, true); let c = c + 1;
+        do solution.setSquare(3, 9, true); let c = c + 1;
+        // Row 4: .XXXXXXXX.
+        do solution.setSquare(4, 1, true); let c = c + 1;
+        do solution.setSquare(4, 2, true); let c = c + 1;
+        do solution.setSquare(4, 3, true); let c = c + 1;
+        do solution.setSquare(4, 4, true); let c = c + 1;
+        do solution.setSquare(4, 5, true); let c = c + 1;
+        do solution.setSquare(4, 6, true); let c = c + 1;
+        do solution.setSquare(4, 7, true); let c = c + 1;
+        do solution.setSquare(4, 8, true); let c = c + 1;
+        // Row 5: ..XXXXXX..
+        do solution.setSquare(5, 2, true); let c = c + 1;
+        do solution.setSquare(5, 3, true); let c = c + 1;
+        do solution.setSquare(5, 4, true); let c = c + 1;
+        do solution.setSquare(5, 5, true); let c = c + 1;
+        do solution.setSquare(5, 6, true); let c = c + 1;
+        do solution.setSquare(5, 7, true); let c = c + 1;
+        // Row 6: ...XXXX...
+        do solution.setSquare(6, 3, true); let c = c + 1;
+        do solution.setSquare(6, 4, true); let c = c + 1;
+        do solution.setSquare(6, 5, true); let c = c + 1;
+        do solution.setSquare(6, 6, true); let c = c + 1;
+        // Row 7: ....XX....
+        do solution.setSquare(7, 4, true); let c = c + 1;
+        do solution.setSquare(7, 5, true); let c = c + 1;
+        // Rows 8-9 empty
+        return c;
+    }
+    
+    /** Smiley face */
+    function int createSmiley() {
+        var int c;
+        let solution = Board.new(10);
+        let c = 0;
+        // Row 0: ..XXXXXX..
+        do solution.setSquare(0, 2, true); let c = c + 1;
+        do solution.setSquare(0, 3, true); let c = c + 1;
+        do solution.setSquare(0, 4, true); let c = c + 1;
+        do solution.setSquare(0, 5, true); let c = c + 1;
+        do solution.setSquare(0, 6, true); let c = c + 1;
+        do solution.setSquare(0, 7, true); let c = c + 1;
+        // Row 1: .X......X.
+        do solution.setSquare(1, 1, true); let c = c + 1;
+        do solution.setSquare(1, 8, true); let c = c + 1;
+        // Row 2: X..XX..XX.X (eyes)
+        do solution.setSquare(2, 0, true); let c = c + 1;
+        do solution.setSquare(2, 3, true); let c = c + 1;
+        do solution.setSquare(2, 6, true); let c = c + 1;
+        do solution.setSquare(2, 9, true); let c = c + 1;
+        // Row 3: X........X
+        do solution.setSquare(3, 0, true); let c = c + 1;
+        do solution.setSquare(3, 9, true); let c = c + 1;
+        // Row 4: X........X
+        do solution.setSquare(4, 0, true); let c = c + 1;
+        do solution.setSquare(4, 9, true); let c = c + 1;
+        // Row 5: X.X....X.X (smile corners)
+        do solution.setSquare(5, 0, true); let c = c + 1;
+        do solution.setSquare(5, 2, true); let c = c + 1;
+        do solution.setSquare(5, 7, true); let c = c + 1;
+        do solution.setSquare(5, 9, true); let c = c + 1;
+        // Row 6: X..XXXX..X (smile)
+        do solution.setSquare(6, 0, true); let c = c + 1;
+        do solution.setSquare(6, 3, true); let c = c + 1;
+        do solution.setSquare(6, 4, true); let c = c + 1;
+        do solution.setSquare(6, 5, true); let c = c + 1;
+        do solution.setSquare(6, 6, true); let c = c + 1;
+        do solution.setSquare(6, 9, true); let c = c + 1;
+        // Row 7: .X......X.
+        do solution.setSquare(7, 1, true); let c = c + 1;
+        do solution.setSquare(7, 8, true); let c = c + 1;
+        // Row 8: ..XXXXXX..
+        do solution.setSquare(8, 2, true); let c = c + 1;
+        do solution.setSquare(8, 3, true); let c = c + 1;
+        do solution.setSquare(8, 4, true); let c = c + 1;
+        do solution.setSquare(8, 5, true); let c = c + 1;
+        do solution.setSquare(8, 6, true); let c = c + 1;
+        do solution.setSquare(8, 7, true); let c = c + 1;
+        // Row 9: empty
+        return c;
+    }
+    
+    /** Cat face */
+    function int createCat() {
+        var int c;
+        let solution = Board.new(10);
+        let c = 0;
+        // Row 0: X........X (ears)
+        do solution.setSquare(0, 0, true); let c = c + 1;
+        do solution.setSquare(0, 9, true); let c = c + 1;
+        // Row 1: XX......XX
+        do solution.setSquare(1, 0, true); let c = c + 1;
+        do solution.setSquare(1, 1, true); let c = c + 1;
+        do solution.setSquare(1, 8, true); let c = c + 1;
+        do solution.setSquare(1, 9, true); let c = c + 1;
+        // Row 2: XXX....XXX
+        do solution.setSquare(2, 0, true); let c = c + 1;
+        do solution.setSquare(2, 1, true); let c = c + 1;
+        do solution.setSquare(2, 2, true); let c = c + 1;
+        do solution.setSquare(2, 7, true); let c = c + 1;
+        do solution.setSquare(2, 8, true); let c = c + 1;
+        do solution.setSquare(2, 9, true); let c = c + 1;
+        // Row 3: .XXXXXXXX.
+        do solution.setSquare(3, 1, true); let c = c + 1;
+        do solution.setSquare(3, 2, true); let c = c + 1;
+        do solution.setSquare(3, 3, true); let c = c + 1;
+        do solution.setSquare(3, 4, true); let c = c + 1;
+        do solution.setSquare(3, 5, true); let c = c + 1;
+        do solution.setSquare(3, 6, true); let c = c + 1;
+        do solution.setSquare(3, 7, true); let c = c + 1;
+        do solution.setSquare(3, 8, true); let c = c + 1;
+        // Row 4: .X.XX.XX.X (eyes)
+        do solution.setSquare(4, 1, true); let c = c + 1;
+        do solution.setSquare(4, 3, true); let c = c + 1;
+        do solution.setSquare(4, 4, true); let c = c + 1;
+        do solution.setSquare(4, 6, true); let c = c + 1;
+        do solution.setSquare(4, 7, true); let c = c + 1;
+        do solution.setSquare(4, 8, true); let c = c + 1;
+        // Row 5: .XXXXXXXX.
+        do solution.setSquare(5, 1, true); let c = c + 1;
+        do solution.setSquare(5, 2, true); let c = c + 1;
+        do solution.setSquare(5, 3, true); let c = c + 1;
+        do solution.setSquare(5, 4, true); let c = c + 1;
+        do solution.setSquare(5, 5, true); let c = c + 1;
+        do solution.setSquare(5, 6, true); let c = c + 1;
+        do solution.setSquare(5, 7, true); let c = c + 1;
+        do solution.setSquare(5, 8, true); let c = c + 1;
+        // Row 6: .X..XX..X. (nose)
+        do solution.setSquare(6, 1, true); let c = c + 1;
+        do solution.setSquare(6, 4, true); let c = c + 1;
+        do solution.setSquare(6, 5, true); let c = c + 1;
+        do solution.setSquare(6, 8, true); let c = c + 1;
+        // Row 7: .X.X..X.X. (whiskers)
+        do solution.setSquare(7, 1, true); let c = c + 1;
+        do solution.setSquare(7, 3, true); let c = c + 1;
+        do solution.setSquare(7, 6, true); let c = c + 1;
+        do solution.setSquare(7, 8, true); let c = c + 1;
+        // Row 8: ..XXXXXX..
+        do solution.setSquare(8, 2, true); let c = c + 1;
+        do solution.setSquare(8, 3, true); let c = c + 1;
+        do solution.setSquare(8, 4, true); let c = c + 1;
+        do solution.setSquare(8, 5, true); let c = c + 1;
+        do solution.setSquare(8, 6, true); let c = c + 1;
+        do solution.setSquare(8, 7, true); let c = c + 1;
+        // Row 9: empty
+        return c;
+    }
+    
+    /** Spaceship/Rocket */
+    function int createSpaceship() {
+        var int c;
+        let solution = Board.new(10);
+        let c = 0;
+        // Row 0: ....XX....
+        do solution.setSquare(0, 4, true); let c = c + 1;
+        do solution.setSquare(0, 5, true); let c = c + 1;
+        // Row 1: ...XXXX...
+        do solution.setSquare(1, 3, true); let c = c + 1;
+        do solution.setSquare(1, 4, true); let c = c + 1;
+        do solution.setSquare(1, 5, true); let c = c + 1;
+        do solution.setSquare(1, 6, true); let c = c + 1;
+        // Row 2: ...XXXX...
+        do solution.setSquare(2, 3, true); let c = c + 1;
+        do solution.setSquare(2, 4, true); let c = c + 1;
+        do solution.setSquare(2, 5, true); let c = c + 1;
+        do solution.setSquare(2, 6, true); let c = c + 1;
+        // Row 3: ..XXXXXX..
+        do solution.setSquare(3, 2, true); let c = c + 1;
+        do solution.setSquare(3, 3, true); let c = c + 1;
+        do solution.setSquare(3, 4, true); let c = c + 1;
+        do solution.setSquare(3, 5, true); let c = c + 1;
+        do solution.setSquare(3, 6, true); let c = c + 1;
+        do solution.setSquare(3, 7, true); let c = c + 1;
+        // Row 4: ..XXXXXX..
+        do solution.setSquare(4, 2, true); let c = c + 1;
+        do solution.setSquare(4, 3, true); let c = c + 1;
+        do solution.setSquare(4, 4, true); let c = c + 1;
+        do solution.setSquare(4, 5, true); let c = c + 1;
+        do solution.setSquare(4, 6, true); let c = c + 1;
+        do solution.setSquare(4, 7, true); let c = c + 1;
+        // Row 5: .XXXXXXXX.
+        do solution.setSquare(5, 1, true); let c = c + 1;
+        do solution.setSquare(5, 2, true); let c = c + 1;
+        do solution.setSquare(5, 3, true); let c = c + 1;
+        do solution.setSquare(5, 4, true); let c = c + 1;
+        do solution.setSquare(5, 5, true); let c = c + 1;
+        do solution.setSquare(5, 6, true); let c = c + 1;
+        do solution.setSquare(5, 7, true); let c = c + 1;
+        do solution.setSquare(5, 8, true); let c = c + 1;
+        // Row 6: .XX.XX.XX. (windows)
+        do solution.setSquare(6, 1, true); let c = c + 1;
+        do solution.setSquare(6, 2, true); let c = c + 1;
+        do solution.setSquare(6, 4, true); let c = c + 1;
+        do solution.setSquare(6, 5, true); let c = c + 1;
+        do solution.setSquare(6, 7, true); let c = c + 1;
+        do solution.setSquare(6, 8, true); let c = c + 1;
+        // Row 7: XX..XX..XX (fins)
+        do solution.setSquare(7, 0, true); let c = c + 1;
+        do solution.setSquare(7, 1, true); let c = c + 1;
+        do solution.setSquare(7, 4, true); let c = c + 1;
+        do solution.setSquare(7, 5, true); let c = c + 1;
+        do solution.setSquare(7, 8, true); let c = c + 1;
+        do solution.setSquare(7, 9, true); let c = c + 1;
+        // Row 8: ....XX.... (flame)
+        do solution.setSquare(8, 4, true); let c = c + 1;
+        do solution.setSquare(8, 5, true); let c = c + 1;
+        // Row 9: ...X..X... (flame)
+        do solution.setSquare(9, 3, true); let c = c + 1;
+        do solution.setSquare(9, 6, true); let c = c + 1;
+        return c;
     }
 
     function void run() {
@@ -136,16 +386,34 @@ class NonogramGame {
         do Output.moveCursor(0, 0);
         do Output.printString("        ");
         
-        // clear the player board
-        do board.clear();
+        // move to next puzzle (cycle 0-3)
+        let currentPuzzle = currentPuzzle + 1;
+        if (currentPuzzle > 3) {
+            let currentPuzzle = 0;
+        }
         
-        // reset mismatch count (solution stays the same)
+        // clear screen for new puzzle
+        do Screen.clearScreen();
+        
+        // create new solution
         let mismatchCount = NonogramGame.createSolution();
+        
+        // generate new constraints
+        let rowConstraints = Board.getRowConstraints(solution);
+        let colConstraints = Board.getColConstraints(solution);
+        
+        // clear and reset player board
+        do board.clear();
         
         // re-render the empty board
         do GraphicsManager.initGrid(board);
         
-        // redraw cursor
+        // render new constraints
+        do GraphicsManager.renderAllConstraints(rowConstraints, colConstraints, boardSize);
+        
+        // reset cursor to top-left
+        let cursorRow = 0;
+        let cursorCol = 0;
         do GraphicsManager.drawCursor(cursorRow, cursorCol, board.getSquare(cursorRow, cursorCol));
         return;
     }

@@ -110,4 +110,99 @@ class GraphicsManager {
         do Screen.drawCircle(cx, cy, radius);
         return;
     }
+    
+    /** Renders row constraints to the left of the grid */
+    function void renderRowConstraints(Array constraints, int boardSize) {
+        var int row;
+        var int y;
+        var int x;
+        var Array rowConstraint;
+        var int len;
+        var int i;
+        var int value;
+        var int totalWidth;
+        
+        let row = 0;
+        while (row < boardSize) {
+            let rowConstraint = constraints[row];
+            let len = rowConstraint[0];  // length stored at index 0
+            
+            // Calculate y position: vertically centered in row
+            let y = (gridOrigin.getY() + (row * squareSize)) + ((squareSize - 10) / 2);
+            
+            // Calculate total width of all constraint numbers
+            let totalWidth = 0;
+            let i = 0;
+            while (i < len) {
+                let value = rowConstraint[i + 1];  // values start at index 1
+                let totalWidth = totalWidth + DigitRenderer.getNumberWidth(value);
+                if (i < (len - 1)) {
+                    let totalWidth = totalWidth + 5;  // gap between numbers
+                }
+                let i = i + 1;
+            }
+            
+            // Start x position: right-aligned to left of grid with 4px gap
+            let x = (gridOrigin.getX() - totalWidth) - 4;
+            
+            // Draw each constraint number
+            let i = 0;
+            while (i < len) {
+                let value = rowConstraint[i + 1];
+                do DigitRenderer.drawNumber(x, y, value);
+                let x = x + DigitRenderer.getNumberWidth(value) + 5;
+                let i = i + 1;
+            }
+            
+            let row = row + 1;
+        }
+        return;
+    }
+    
+    /** Renders column constraints above the grid */
+    function void renderColConstraints(Array constraints, int boardSize) {
+        var int col;
+        var int x;
+        var int y;
+        var Array colConstraint;
+        var int len;
+        var int i;
+        var int value;
+        var int numWidth;
+        
+        let col = 0;
+        while (col < boardSize) {
+            let colConstraint = constraints[col];
+            let len = colConstraint[0];  // length stored at index 0
+            
+            // Start y from bottom (closest to grid) and go up
+            // Bottom y position: just above the grid with 4px gap
+            let y = (gridOrigin.getY() - 10) - 4;  // 10 = digit height
+            
+            // Draw from bottom to top (last constraint closest to grid)
+            let i = len - 1;
+            while (i > -1) {
+                let value = colConstraint[i + 1];  // values start at index 1
+                let numWidth = DigitRenderer.getNumberWidth(value);
+                
+                // Center x in the column
+                let x = (gridOrigin.getX() + (col * squareSize)) + ((squareSize - numWidth) / 2);
+                
+                do DigitRenderer.drawNumber(x, y, value);
+                
+                let y = y - 14;  // move up for next number (10 height + 4 gap)
+                let i = i - 1;
+            }
+            
+            let col = col + 1;
+        }
+        return;
+    }
+    
+    /** Renders all constraints (both row and column) */
+    function void renderAllConstraints(Array rowConstraints, Array colConstraints, int boardSize) {
+        do GraphicsManager.renderRowConstraints(rowConstraints, boardSize);
+        do GraphicsManager.renderColConstraints(colConstraints, boardSize);
+        return;
+    }
 }
