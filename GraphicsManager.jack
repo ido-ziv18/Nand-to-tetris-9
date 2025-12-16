@@ -23,6 +23,7 @@ class GraphicsManager {
         var int size;
         var int row;
         var int col;
+        var int state;
         
         let size = board.getSize();
         do GraphicsManager.drawVerticalLines(size);
@@ -32,7 +33,16 @@ class GraphicsManager {
         while (row < size) {
             let col = 0;
             while (col < size) {
-                do GraphicsManager.paintSquare(row, col, board.getSquare(row, col));
+                let state = board.getSquare(row, col);
+                // 0=white, 1=black, 2=flagged (paint white + X)
+                if (state = 1) {
+                    do GraphicsManager.paintSquare(row, col, true);
+                } else {
+                    do GraphicsManager.paintSquare(row, col, false);
+                    if (state = 2) {
+                        do GraphicsManager.drawFlag(row, col);
+                    }
+                }
                 let col = col + 1;
             }
             let row = row + 1;
@@ -108,6 +118,30 @@ class GraphicsManager {
         // draw circle in opposite color
         do Screen.setColor(~squareColor);
         do Screen.drawCircle(cx, cy, radius);
+        return;
+    }
+    
+    /** Draws an X flag on a square (square should already be white) */
+    function void drawFlag(int row, int col) {
+        var int x1;
+        var int y1;
+        var int x2;
+        var int y2;
+        var int margin;
+        
+        // calculate square bounds with margin
+        let margin = 3;
+        let x1 = (gridOrigin.getX() + (col * squareSize)) + margin;
+        let y1 = (gridOrigin.getY() + (row * squareSize)) + margin;
+        let x2 = (x1 + squareSize) - (margin * 2);
+        let y2 = (y1 + squareSize) - (margin * 2);
+        
+        // draw X in black
+        do Screen.setColor(true);
+        // diagonal from top-left to bottom-right
+        do Screen.drawLine(x1, y1, x2, y2);
+        // diagonal from top-right to bottom-left
+        do Screen.drawLine(x2, y1, x1, y2);
         return;
     }
     

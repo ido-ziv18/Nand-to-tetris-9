@@ -1,4 +1,5 @@
 class Board {
+    // Square states: 0 = white, 1 = black, 2 = flagged (X mark)
     field Array board;
     field int size;
     
@@ -18,7 +19,7 @@ class Board {
             let row = Array.new(size);
             let colIndex = 0;
             while (colIndex < size) {
-                let row[colIndex] = false;
+                let row[colIndex] = 0;  // white
                 let colIndex = colIndex + 1;
             }
             let board[rowIndex] = row;
@@ -34,11 +35,12 @@ class Board {
         return;
     }
 
-    method void setSquare(int row, int col, boolean color) {
+    /** Sets square state: 0=white, 1=black, 2=flagged */
+    method void setSquare(int row, int col, int state) {
         var Array rowArray;
         do validateSquare(row, col);
         let rowArray = board[row];
-        let rowArray[col] = color;
+        let rowArray[col] = state;
         return;
     }
 
@@ -48,14 +50,15 @@ class Board {
         return size;
     }
 
-    method boolean getSquare(int row, int col) {
+    /** Gets square state: 0=white, 1=black, 2=flagged */
+    method int getSquare(int row, int col) {
         var Array rowArray;
         do validateSquare(row, col);
         let rowArray = board[row];
         return rowArray[col];
     }
 
-    /** clears the board. sets all squares to false */
+    /** clears the board. sets all squares to 0 (white) */
     method void clear() {
         var int rowIndex;
         var int colIndex;
@@ -63,7 +66,7 @@ class Board {
         while (rowIndex < size) {
             let colIndex = 0;
             while (colIndex < size) {
-                do setSquare(rowIndex, colIndex, false);
+                do setSquare(rowIndex, colIndex, 0);
                 let colIndex = colIndex + 1;
             }
             let rowIndex = rowIndex + 1;
@@ -112,11 +115,11 @@ class Board {
             let constraintIndex = 0;
             
             while (col < boardSize) {
-                if (board.getSquare(row, col)) {
-                    // Black square - increment count
+                if (board.getSquare(row, col) = 1) {
+                    // Black square (state 1) - increment count
                     let count = count + 1;
                 } else {
-                    // White square - if we had a run, record it
+                    // White/flagged square - if we had a run, record it
                     if (count > 0) {
                         let tempConstraints[constraintIndex] = count;
                         let constraintIndex = constraintIndex + 1;
@@ -182,11 +185,11 @@ class Board {
             let constraintIndex = 0;
             
             while (row < boardSize) {
-                if (board.getSquare(row, col)) {
-                    // Black square - increment count
+                if (board.getSquare(row, col) = 1) {
+                    // Black square (state 1) - increment count
                     let count = count + 1;
                 } else {
-                    // White square - if we had a run, record it
+                    // White/flagged square - if we had a run, record it
                     if (count > 0) {
                         let tempConstraints[constraintIndex] = count;
                         let constraintIndex = constraintIndex + 1;
