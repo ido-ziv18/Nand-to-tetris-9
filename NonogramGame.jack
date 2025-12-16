@@ -299,15 +299,18 @@ class NonogramGame {
     function void run() {
         var int key;
         var int prevKey;
+        var boolean running;
         
         do NonogramGame.initGame();
         let prevKey = 0;
+        let running = true;
         
-        while (true) {
+        while (running) {
             let key = Keyboard.keyPressed();
             
             // only act on new key press (not held)
             if (~(key = prevKey)) {
+                if (key = 140) { let running = false; }                // ESC - quit
                 if (key = 130) { do NonogramGame.moveCursor(0, -1); }  // left
                 if (key = 131) { do NonogramGame.moveCursor(-1, 0); }  // up
                 if (key = 132) { do NonogramGame.moveCursor(0, 1); }   // right
@@ -318,6 +321,9 @@ class NonogramGame {
             }
             let prevKey = key;
         }
+        
+        // cleanup before exiting
+        do NonogramGame.dispose();
         return;
     }
     
@@ -491,6 +497,41 @@ class NonogramGame {
         let cursorRow = 0;
         let cursorCol = 0;
         do GraphicsManager.drawCursor(cursorRow, cursorCol, board.getSquare(cursorRow, cursorCol) = 1);
+        return;
+    }
+    
+    /** Disposes all game objects */
+    function void dispose() {
+        // dispose boards
+        do board.dispose();
+        do solution.dispose();
+        
+        // dispose constraint arrays
+        do NonogramGame.disposeConstraints(rowConstraints, boardSize);
+        do NonogramGame.disposeConstraints(colConstraints, boardSize);
+        
+        // dispose graphics manager resources
+        do GraphicsManager.dispose();
+        
+        // clear screen
+        do Screen.clearScreen();
+        do Output.moveCursor(0, 0);
+        do Output.printString("Goodbye!");
+        return;
+    }
+    
+    /** Helper to dispose constraint arrays */
+    function void disposeConstraints(Array constraints, int size) {
+        var int i;
+        var Array constraint;
+        
+        let i = 0;
+        while (i < size) {
+            let constraint = constraints[i];
+            do Memory.deAlloc(constraint);
+            let i = i + 1;
+        }
+        do Memory.deAlloc(constraints);
         return;
     }
 }
