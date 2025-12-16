@@ -4,27 +4,46 @@ class NonogramGame {
     static int cursorRow;
     static int cursorCol;
     static int boardSize;
+    static int mismatchCount;
     function void initGame() {
-        // draw something to solution
-        let solution = Board.new(10);
-        do solution.setSquare(0, 0, true);
-        do solution.setSquare(0, 1, true);
-        do solution.setSquare(0, 2, true);
-        do solution.setSquare(0, 3, true);
-        do solution.setSquare(0, 4, true);
-        do solution.setSquare(0, 5, true);
-        do solution.setSquare(0, 6, true);
-        do solution.setSquare(0, 7, true);
-        do solution.setSquare(0, 8, true);
-        do solution.setSquare(0, 9, true);
-        do GraphicsManager.initRenderBoard(solution);
+        // create solution and get initial mismatch count
+        let mismatchCount = NonogramGame.createSolution();
+        let boardSize = solution.getSize();
+        
+        // create empty player board
+        let board = Board.new(boardSize);
+        
+        // render the empty board (not solution)
+        do GraphicsManager.initRenderBoard(board);
+        
         // initialize cursor at top-left
         let cursorRow = 0;
         let cursorCol = 0;
-        let boardSize = solution.getSize();
-        do GraphicsManager.drawCursor(cursorRow, cursorCol, solution.getSquare(cursorRow, cursorCol));
-        // write constraints
+        do GraphicsManager.drawCursor(cursorRow, cursorCol, board.getSquare(cursorRow, cursorCol));
+        // write constraints (TODO: later)
         return;
+    }
+    
+    /** Creates the solution board and returns the number of black squares */
+    function int createSolution() {
+        var int blackCount;
+        
+        let solution = Board.new(10);
+        let blackCount = 0;
+        
+        // Set the pattern - first row all black
+        do solution.setSquare(0, 0, true); let blackCount = blackCount + 1;
+        do solution.setSquare(0, 1, true); let blackCount = blackCount + 1;
+        do solution.setSquare(0, 2, true); let blackCount = blackCount + 1;
+        do solution.setSquare(0, 3, true); let blackCount = blackCount + 1;
+        do solution.setSquare(0, 4, true); let blackCount = blackCount + 1;
+        do solution.setSquare(0, 5, true); let blackCount = blackCount + 1;
+        do solution.setSquare(0, 6, true); let blackCount = blackCount + 1;
+        do solution.setSquare(0, 7, true); let blackCount = blackCount + 1;
+        do solution.setSquare(0, 8, true); let blackCount = blackCount + 1;
+        do solution.setSquare(0, 9, true); let blackCount = blackCount + 1;
+        
+        return blackCount;
     }
 
     function void run() {
@@ -61,30 +80,73 @@ class NonogramGame {
         if ((newRow > -1) & (newRow < boardSize)) {
             if ((newCol > -1) & (newCol < boardSize)) {
                 // erase old cursor by repainting the square
-                do GraphicsManager.paintSquare(cursorRow, cursorCol, solution.getSquare(cursorRow, cursorCol));
+                do GraphicsManager.paintSquare(cursorRow, cursorCol, board.getSquare(cursorRow, cursorCol));
                 // update position
                 let cursorRow = newRow;
                 let cursorCol = newCol;
                 // draw new cursor
-                do GraphicsManager.drawCursor(cursorRow, cursorCol, solution.getSquare(cursorRow, cursorCol));
+                do GraphicsManager.drawCursor(cursorRow, cursorCol, board.getSquare(cursorRow, cursorCol));
             }
         }
         return;
     }
     
     function void toggleSquare() {
-        var boolean currentColor;
+        var boolean oldColor;
         var boolean newColor;
+        var boolean solutionColor;
         
-        let currentColor = solution.getSquare(cursorRow, cursorCol);
-        let newColor = ~currentColor;
+        let oldColor = board.getSquare(cursorRow, cursorCol);
+        let newColor = ~oldColor;
+        let solutionColor = solution.getSquare(cursorRow, cursorCol);
+        
+        // update mismatch count
+        if (oldColor = solutionColor) {
+            let mismatchCount = mismatchCount + 1;  // was matching, now won't
+        }
+        if (newColor = solutionColor) {
+            let mismatchCount = mismatchCount - 1;  // now matches
+        }
         
         // update the board
-        do solution.setSquare(cursorRow, cursorCol, newColor);
+        do board.setSquare(cursorRow, cursorCol, newColor);
         // repaint the square with new color
         do GraphicsManager.paintSquare(cursorRow, cursorCol, newColor);
         // redraw cursor with opposite of new color
         do GraphicsManager.drawCursor(cursorRow, cursorCol, newColor);
+        
+        // check win condition
+        if (mismatchCount = 0) {
+            do NonogramGame.handleWin();
+        }
+        return;
+    }
+    
+    function void handleWin() {
+        // clear any previous message and display success
+        do Output.moveCursor(0, 0);
+        do Output.printString("        ");  // clear old text
+        do Output.moveCursor(0, 0);
+        do Output.printString("Success!");
+        
+        // wait so user can see the message
+        do Sys.wait(1000);
+        
+        // clear the message
+        do Output.moveCursor(0, 0);
+        do Output.printString("        ");
+        
+        // clear the player board
+        do board.clear();
+        
+        // reset mismatch count (solution stays the same)
+        let mismatchCount = NonogramGame.createSolution();
+        
+        // re-render the empty board
+        do GraphicsManager.initGrid(board);
+        
+        // redraw cursor
+        do GraphicsManager.drawCursor(cursorRow, cursorCol, board.getSquare(cursorRow, cursorCol));
         return;
     }
 }
