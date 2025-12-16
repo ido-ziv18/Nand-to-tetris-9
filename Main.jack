@@ -1,6 +1,5 @@
 class Main {
     function void main() {
-        do NonogramGame.initGame();
         do NonogramGame.run();
         return;
     }
