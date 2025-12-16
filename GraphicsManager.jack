@@ -10,9 +10,9 @@ class GraphicsManager {
         
         let gridSize = 140; //fixed grid dimensions
         let size = board.getSize();
-        let squareSize = Math.divide(gridSize, size);
+        let squareSize = gridSize / size;
         let topY = 245 - gridSize;
-        let leftX = 256 - Math.multiply(Math.divide(size, 2), squareSize);
+        let leftX = 256 - ((size / 2) * squareSize);
         let gridOrigin = Point.new(leftX, topY);
         do GraphicsManager.initGrid(board);
 
@@ -47,7 +47,7 @@ class GraphicsManager {
         var int topY;
         
         let topY = gridOrigin.getY();
-        let bottomY = topY + Math.multiply(size, squareSize);
+        let bottomY = topY + (size * squareSize);
         let x = gridOrigin.getX();
         
         let index = 0;
@@ -66,7 +66,7 @@ class GraphicsManager {
         var int y;
         
         let leftX = gridOrigin.getX();
-        let rightX = leftX + Math.multiply(size, squareSize);
+        let rightX = leftX + (size * squareSize);
         let y = gridOrigin.getY();
         
         let index = 0;
@@ -84,10 +84,10 @@ class GraphicsManager {
         var int x2;
         var int y2;
         
-        let x1 = gridOrigin.getX() + Math.multiply(col, squareSize) + 1;
-        let y1 = gridOrigin.getY() + Math.multiply(row, squareSize) + 1;
-        let x2 = x1 + squareSize - 2;
-        let y2 = y1 + squareSize - 2;
+        let x1 = (gridOrigin.getX() + (col * squareSize)) + 1;
+        let y1 = (gridOrigin.getY() + (row * squareSize)) + 1;
+        let x2 = (x1 + squareSize) - 2;
+        let y2 = (y1 + squareSize) - 2;
         do Screen.setColor(color);
         do Screen.drawRectangle(x1, y1, x2, y2);
         return;
