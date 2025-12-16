@@ -1,0 +1,3 @@
+Code   Method           Description
+----   ------           ----------------------------------
+21     Board.setSquare  Square out of bounds 

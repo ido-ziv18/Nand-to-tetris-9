@@ -1,0 +1,15 @@
+class NonogramGame {
+    static Board solution;
+    static Board board;
+    function void initGame() {
+        // draw something to solution
+        // write constraints
+        return;
+    }
+
+    function void run() {
+        // inifinite loop
+
+        return;
+    }
+}

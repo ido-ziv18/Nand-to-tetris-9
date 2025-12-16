@@ -1,0 +1,69 @@
+class Board {
+    field Array board;
+    field int size;
+    constructor Board new(int _size) {
+        let size = _size;
+        let board = Array.new(size);
+        var int rowIndex = 0;
+        while (rowIndex < size) {
+            let row = Array.new(size);
+            var int colIndex;
+            let colIndex = 0;
+            while (colIndex < size) {
+                let row[colIndex] = false;
+                colIndex = colIndex + 1;
+            }
+            let board[rowIndex] = row;
+            rowIndex = rowIndex + 1; 
+        }
+        return this;
+    }
+
+    method void validateSquare(int row, int col) {
+        if (row < 0 | row > size | col < 0 | col > size) {
+            do Sys.error(21);
+        }
+        return;
+    }
+
+    method void setSquare(int row, int col, boolean color) {
+        do this.validateSquare();
+        let board[row][col] = color;
+        return;
+    }
+
+    method boolean getSquare(int row, int col) {
+        do this.validateSquare();
+        return board[row][col];
+    }
+
+
+    /** clears the board. sets all squares to false */
+    method void clear() {
+        var int rowIndex;
+        let rowIndex = 0;
+        while (rowIndex < size) {
+            var int colIndex;
+            let colIndex = 0;
+            while (colIndex < size) {
+                this.setSquare(rowIndex, colIndex, false);
+                let colIndex = colIndex + 1;
+            }
+            let rowIndex = rowIndex + 1;
+        }
+        return;
+
+    }
+
+    method void dispose() {
+        var int rowIndex = 0;
+        while (rowIndex < size) {
+            let row = board[rowIndex];
+            Memory.deAlloc(row);
+            rowIndex = rowIndex + 1;
+        }
+        
+        do Memory.deAlloc(this);
+        return;
+    }
+}
