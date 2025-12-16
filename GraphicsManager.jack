@@ -92,4 +92,20 @@ class GraphicsManager {
         do Screen.drawRectangle(x1, y1, x2, y2);
         return;
     }
+
+    function void drawCursor(int row, int col, boolean squareColor) {
+        var int cx;
+        var int cy;
+        var int radius;
+        
+        // calculate center of the square
+        let cx = (gridOrigin.getX() + (col * squareSize)) + (squareSize / 2);
+        let cy = (gridOrigin.getY() + (row * squareSize)) + (squareSize / 2);
+        // radius is about 1/4 of square size
+        let radius = squareSize / 4;
+        // draw circle in opposite color
+        do Screen.setColor(~squareColor);
+        do Screen.drawCircle(cx, cy, radius);
+        return;
+    }
 }
