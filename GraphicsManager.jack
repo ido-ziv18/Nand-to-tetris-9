@@ -1,0 +1,61 @@
+class GraphicsManager {
+    static int squareSize;
+    static int gridPaddingTop;
+    static int gridSize;
+    
+    function void initRenderBoard(Board board) {
+        var int size;
+        
+        let gridSize = 140; //fixed grid dimensions
+        let size = board.getSize();
+        let squareSize = Math.divide(gridSize, size);
+        let gridPaddingTop = 245 - gridSize;
+        do GraphicsManager.drawGrid(size);
+
+        return;
+    }
+
+    function void drawGrid(int size) {
+        do GraphicsManager.drawVerticalLines(size);
+        do GraphicsManager.drawHorizontalLines(size);
+        return;
+    }
+
+    function void drawVerticalLines(int size) {
+        var int index;
+        var int bottomY;
+        var int topY;
+        var int x;
+        
+        let topY = gridPaddingTop;
+        let bottomY = (Math.multiply(size, squareSize)) + topY;
+        let x = 256 - (Math.multiply((Math.divide(size, 2)), squareSize));
+        
+        let index = 0;
+        while (index < (size + 1)) {
+            do Screen.drawLine(x, topY, x, bottomY);
+            let index = index + 1;
+            let x = x + squareSize;
+        }
+        return;
+    }
+
+    function void drawHorizontalLines(int size) {
+        var int index;
+        var int leftX;
+        var int rightX;
+        var int y;
+        
+        let leftX = 256 - (Math.multiply((Math.divide(size, 2)), squareSize));
+        let rightX = leftX + Math.multiply(size, squareSize);
+        let y = gridPaddingTop;
+        
+        let index = 0;
+        while (index < (size + 1)) {
+            do Screen.drawLine(leftX, y, rightX, y);
+            let index = index + 1;
+            let y = y + squareSize;
+        }
+        return;
+    }
+}
