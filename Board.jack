@@ -1,8 +1,9 @@
 class Board {
     field Array board;
     field int size;
-    constructor Board new(int size_) {
-        let size = size_;
+    
+    constructor Board new(int asize) {
+        let size = asize;
         let board = Array.new(size);
         do createBoard();
         return this;
@@ -12,7 +13,6 @@ class Board {
         var int rowIndex;
         var int colIndex;
         var Array row;
-        
         let rowIndex = 0;
         while (rowIndex < size) {
             let row = Array.new(size);
@@ -28,7 +28,7 @@ class Board {
     }
 
     method void validateSquare(int row, int col) {
-        if (row < 0 | row > size | col < 0 | col > size) {
+        if (((row < 0) | (row > size)) | ((col < 0) | (col > size))) {
             do Sys.error(21);
         }
         return;
@@ -42,17 +42,18 @@ class Board {
         return;
     }
 
+    method int getSize() {
+        var int temp;
+        let temp = size;
+        return size;
+    }
+
     method boolean getSquare(int row, int col) {
         var Array rowArray;
         do validateSquare(row, col);
         let rowArray = board[row];
         return rowArray[col];
     }
-
-    method int getSize() {
-        return size;
-    }
-
 
     /** clears the board. sets all squares to false */
     method void clear() {
