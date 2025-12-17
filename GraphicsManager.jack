@@ -26,8 +26,7 @@ class GraphicsManager {
         var int state;
         
         let size = board.getSize();
-        do GraphicsManager.drawVerticalLines(size);
-        do GraphicsManager.drawHorizontalLines(size);
+        // Paint squares first, then draw grid lines on top
         
         let row = 0;
         while (row < size) {
@@ -47,6 +46,9 @@ class GraphicsManager {
             }
             let row = row + 1;
         }
+        // Draw grid lines on top of painted squares
+        do GraphicsManager.drawVerticalLines(size);
+        do GraphicsManager.drawHorizontalLines(size);
         return;
     }
 
@@ -55,6 +57,7 @@ class GraphicsManager {
         var int bottomY;
         var int x;
         var int topY;
+        var int mod5;
         
         do Screen.setColor(true);  // black lines
         let topY = gridOrigin.getY();
@@ -63,7 +66,17 @@ class GraphicsManager {
         
         let index = 0;
         while (index < (size + 1)) {
-            do Screen.drawLine(x, topY, x, bottomY);
+            // Check if this is a multiple of 5 (thicker line)
+            let mod5 = index - ((index / 5) * 5);
+            if (mod5 = 0) {
+                // Thick line (3 pixels wide)
+                do Screen.drawLine(x - 1, topY, x - 1, bottomY);
+                do Screen.drawLine(x, topY, x, bottomY);
+                do Screen.drawLine(x + 1, topY, x + 1, bottomY);
+            } else {
+                // Normal line
+                do Screen.drawLine(x, topY, x, bottomY);
+            }
             let index = index + 1;
             let x = x + squareSize;
         }
@@ -75,6 +88,7 @@ class GraphicsManager {
         var int leftX;
         var int rightX;
         var int y;
+        var int mod5;
         
         do Screen.setColor(true);  // black lines
         let leftX = gridOrigin.getX();
@@ -83,7 +97,17 @@ class GraphicsManager {
         
         let index = 0;
         while (index < (size + 1)) {
-            do Screen.drawLine(leftX, y, rightX, y);
+            // Check if this is a multiple of 5 (thicker line)
+            let mod5 = index - ((index / 5) * 5);
+            if (mod5 = 0) {
+                // Thick line (3 pixels wide)
+                do Screen.drawLine(leftX, y - 1, rightX, y - 1);
+                do Screen.drawLine(leftX, y, rightX, y);
+                do Screen.drawLine(leftX, y + 1, rightX, y + 1);
+            } else {
+                // Normal line
+                do Screen.drawLine(leftX, y, rightX, y);
+            }
             let index = index + 1;
             let y = y + squareSize;
         }
@@ -95,11 +119,46 @@ class GraphicsManager {
         var int y1;
         var int x2;
         var int y2;
+        var int leftMod;
+        var int rightMod;
+        var int topMod;
+        var int bottomMod;
         
-        let x1 = (gridOrigin.getX() + (col * squareSize)) + 1;
-        let y1 = (gridOrigin.getY() + (row * squareSize)) + 1;
-        let x2 = (x1 + squareSize) - 2;
-        let y2 = (y1 + squareSize) - 2;
+        // Calculate margins based on adjacent grid line thickness
+        // Thick lines (every 5) need 2px margin, thin lines need 1px
+        let leftMod = col - ((col / 5) * 5);
+        let rightMod = (col + 1) - (((col + 1) / 5) * 5);
+        let topMod = row - ((row / 5) * 5);
+        let bottomMod = (row + 1) - (((row + 1) / 5) * 5);
+        
+        // Left edge: +2 if thick line (col % 5 == 0), else +1
+        if (leftMod = 0) {
+            let x1 = (gridOrigin.getX() + (col * squareSize)) + 2;
+        } else {
+            let x1 = (gridOrigin.getX() + (col * squareSize)) + 1;
+        }
+        
+        // Top edge: +2 if thick line (row % 5 == 0), else +1
+        if (topMod = 0) {
+            let y1 = (gridOrigin.getY() + (row * squareSize)) + 2;
+        } else {
+            let y1 = (gridOrigin.getY() + (row * squareSize)) + 1;
+        }
+        
+        // Right edge: -2 if thick line ((col+1) % 5 == 0), else -1
+        if (rightMod = 0) {
+            let x2 = (gridOrigin.getX() + ((col + 1) * squareSize)) - 2;
+        } else {
+            let x2 = (gridOrigin.getX() + ((col + 1) * squareSize)) - 1;
+        }
+        
+        // Bottom edge: -2 if thick line ((row+1) % 5 == 0), else -1
+        if (bottomMod = 0) {
+            let y2 = (gridOrigin.getY() + ((row + 1) * squareSize)) - 2;
+        } else {
+            let y2 = (gridOrigin.getY() + ((row + 1) * squareSize)) - 1;
+        }
+        
         do Screen.setColor(color);
         do Screen.drawRectangle(x1, y1, x2, y2);
         return;
