@@ -1,0 +1,249 @@
+class TitleScreen {
+    
+    /** Shows the title screen with logo and waits for any key press */
+    function void show() {
+        var boolean waiting;
+        var boolean visible;
+        var int key;
+        var int loopCount;
+        
+        do Screen.clearScreen();
+        do TitleScreen.drawBorder();
+        do TitleScreen.drawLogo();
+        do TitleScreen.drawInstructions();
+        
+        // Blinking loop - wait for any key
+        let waiting = true;
+        let visible = true;
+        let loopCount = 0;
+        do TitleScreen.drawPressKey(visible);
+        
+        while (waiting) {
+            do Sys.wait(50);  // short wait for responsive key detection
+            
+            let key = Keyboard.keyPressed();
+            if (~(key = 0)) {
+                let waiting = false;
+            } else {
+                let loopCount = loopCount + 1;
+                if (loopCount = 8) {
+                    let loopCount = 0;
+                    let visible = ~visible;  // toggle visibility every 8 loops (400ms)
+                    do TitleScreen.drawPressKey(visible);
+                }
+            }
+        }
+        
+        do Screen.clearScreen();
+        return;
+    }
+    
+    /** Draws a decorative border around the screen */
+    function void drawBorder() {
+        do Screen.setColor(true);
+        // Top border (double line)
+        do Screen.drawRectangle(4, 4, 507, 6);
+        do Screen.drawRectangle(4, 9, 507, 11);
+        // Bottom border (double line)
+        do Screen.drawRectangle(4, 244, 507, 246);
+        do Screen.drawRectangle(4, 249, 507, 251);
+        // Left border (double line)
+        do Screen.drawRectangle(4, 4, 6, 251);
+        do Screen.drawRectangle(9, 4, 11, 251);
+        // Right border (double line)
+        do Screen.drawRectangle(505, 4, 507, 251);
+        do Screen.drawRectangle(500, 4, 502, 251);
+        return;
+    }
+    
+    /** Draws the NONOGRAM logo centered on screen - clean blocky style */
+    function void drawLogo() {
+        var int y;
+        var int x;
+        
+        let y = 40;
+        
+        // Draw each letter - total width ~340, centered at (512-340)/2 = 86
+        let x = 86;
+        
+        do TitleScreen.drawN(x, y);
+        let x = x + 44;
+        
+        do TitleScreen.drawO(x, y);
+        let x = x + 44;
+        
+        do TitleScreen.drawN(x, y);
+        let x = x + 44;
+        
+        do TitleScreen.drawO(x, y);
+        let x = x + 44;
+        
+        do TitleScreen.drawG(x, y);
+        let x = x + 44;
+        
+        do TitleScreen.drawR(x, y);
+        let x = x + 44;
+        
+        do TitleScreen.drawA(x, y);
+        let x = x + 44;
+        
+        do TitleScreen.drawM(x, y);
+        
+        return;
+    }
+    
+    /** Draws letter N - clean block style, 36x40 */
+    function void drawN(int x, int y) {
+        do Screen.setColor(true);
+        // Left bar
+        do Screen.drawRectangle(x, y, x + 7, y + 39);
+        // Right bar
+        do Screen.drawRectangle(x + 28, y, x + 35, y + 39);
+        // Diagonal made of blocks
+        do Screen.drawRectangle(x + 8, y + 2, x + 13, y + 9);
+        do Screen.drawRectangle(x + 11, y + 8, x + 16, y + 15);
+        do Screen.drawRectangle(x + 14, y + 14, x + 19, y + 21);
+        do Screen.drawRectangle(x + 17, y + 20, x + 22, y + 27);
+        do Screen.drawRectangle(x + 20, y + 26, x + 25, y + 33);
+        do Screen.drawRectangle(x + 23, y + 32, x + 28, y + 39);
+        return;
+    }
+    
+    /** Draws letter O - clean block style, 36x40 */
+    function void drawO(int x, int y) {
+        do Screen.setColor(true);
+        // Top bar
+        do Screen.drawRectangle(x + 8, y, x + 27, y + 7);
+        // Bottom bar
+        do Screen.drawRectangle(x + 8, y + 32, x + 27, y + 39);
+        // Left bar
+        do Screen.drawRectangle(x, y + 8, x + 7, y + 31);
+        // Right bar
+        do Screen.drawRectangle(x + 28, y + 8, x + 35, y + 31);
+        // Corner fills
+        do Screen.drawRectangle(x + 4, y + 4, x + 11, y + 11);
+        do Screen.drawRectangle(x + 24, y + 4, x + 31, y + 11);
+        do Screen.drawRectangle(x + 4, y + 28, x + 11, y + 35);
+        do Screen.drawRectangle(x + 24, y + 28, x + 31, y + 35);
+        return;
+    }
+    
+    /** Draws letter G - clean block style, 36x40 */
+    function void drawG(int x, int y) {
+        do Screen.setColor(true);
+        // Top bar
+        do Screen.drawRectangle(x + 8, y, x + 35, y + 7);
+        // Bottom bar
+        do Screen.drawRectangle(x + 8, y + 32, x + 27, y + 39);
+        // Left bar
+        do Screen.drawRectangle(x, y + 8, x + 7, y + 31);
+        // Right bottom bar
+        do Screen.drawRectangle(x + 28, y + 16, x + 35, y + 31);
+        // Middle bar
+        do Screen.drawRectangle(x + 16, y + 16, x + 28, y + 23);
+        // Corner fills
+        do Screen.drawRectangle(x + 4, y + 4, x + 11, y + 11);
+        do Screen.drawRectangle(x + 4, y + 28, x + 11, y + 35);
+        do Screen.drawRectangle(x + 24, y + 28, x + 31, y + 35);
+        return;
+    }
+    
+    /** Draws letter R - clean block style, 36x40 */
+    function void drawR(int x, int y) {
+        do Screen.setColor(true);
+        // Left bar (full height)
+        do Screen.drawRectangle(x, y, x + 7, y + 39);
+        // Top bar
+        do Screen.drawRectangle(x + 8, y, x + 27, y + 7);
+        // Right top bar
+        do Screen.drawRectangle(x + 28, y + 4, x + 35, y + 15);
+        // Middle bar
+        do Screen.drawRectangle(x + 8, y + 16, x + 27, y + 23);
+        // Diagonal leg
+        do Screen.drawRectangle(x + 16, y + 24, x + 23, y + 29);
+        do Screen.drawRectangle(x + 22, y + 28, x + 29, y + 34);
+        do Screen.drawRectangle(x + 28, y + 33, x + 35, y + 39);
+        // Top right corner
+        do Screen.drawRectangle(x + 24, y + 4, x + 31, y + 11);
+        return;
+    }
+    
+    /** Draws letter A - clean block style, 36x40 */
+    function void drawA(int x, int y) {
+        do Screen.setColor(true);
+        // Left leg
+        do Screen.drawRectangle(x, y + 12, x + 7, y + 39);
+        // Right leg
+        do Screen.drawRectangle(x + 28, y + 12, x + 35, y + 39);
+        // Top peak
+        do Screen.drawRectangle(x + 8, y, x + 27, y + 7);
+        // Left slope
+        do Screen.drawRectangle(x + 4, y + 4, x + 11, y + 15);
+        // Right slope
+        do Screen.drawRectangle(x + 24, y + 4, x + 31, y + 15);
+        // Middle bar
+        do Screen.drawRectangle(x + 8, y + 20, x + 27, y + 27);
+        return;
+    }
+    
+    /** Draws letter M - clean block style, 36x40 */
+    function void drawM(int x, int y) {
+        do Screen.setColor(true);
+        // Left bar
+        do Screen.drawRectangle(x, y, x + 7, y + 39);
+        // Right bar
+        do Screen.drawRectangle(x + 28, y, x + 35, y + 39);
+        // Left inner peak
+        do Screen.drawRectangle(x + 8, y, x + 13, y + 11);
+        do Screen.drawRectangle(x + 12, y + 8, x + 17, y + 17);
+        // Right inner peak
+        do Screen.drawRectangle(x + 22, y, x + 27, y + 11);
+        do Screen.drawRectangle(x + 18, y + 8, x + 23, y + 17);
+        // Center connection
+        do Screen.drawRectangle(x + 15, y + 14, x + 20, y + 21);
+        return;
+    }
+    
+    /** Draws game instructions */
+    function void drawInstructions() {
+        // Box around instructions
+        do Screen.setColor(true);
+        do Screen.drawRectangle(156, 125, 356, 127);  // top line
+        do Screen.drawRectangle(156, 205, 356, 207);  // bottom line
+        do Screen.drawRectangle(156, 125, 158, 207);  // left line
+        do Screen.drawRectangle(354, 125, 356, 207);  // right line
+        
+        // Title
+        do Output.moveCursor(12, 26);
+        do Output.printString("HOW TO PLAY");
+        
+        // Instructions
+        do Output.moveCursor(14, 21);
+        do Output.printString("Arrow keys: Move");
+        
+        do Output.moveCursor(15, 21);
+        do Output.printString("Space: Paint cell");
+        
+        do Output.moveCursor(16, 21);
+        do Output.printString("X: Mark as empty");
+        
+        do Output.moveCursor(17, 21);
+        do Output.printString("ESC: Quit game");
+        
+        return;
+    }
+    
+    /** Draws or erases the "Press any key" text */
+    function void drawPressKey(boolean visible) {
+        // Use Output cursor positioning for consistent clearing
+        // Screen is 64 chars wide, text is 16 chars, so start at (64-16)/2 = 24
+        do Output.moveCursor(20, 24);
+        
+        if (visible) {
+            do Output.printString("Press any key...");
+        } else {
+            do Output.printString("                ");  // 16 spaces to clear
+        }
+        return;
+    }
+}

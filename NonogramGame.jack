@@ -325,6 +325,7 @@ class NonogramGame {
         var int prevKey;
         var boolean running;
         
+        do TitleScreen.show();
         do NonogramGame.initGame();
         let prevKey = 0;
         let running = true;
