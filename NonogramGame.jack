@@ -13,12 +13,15 @@ class NonogramGame {
         let mismatchCount = NonogramGame.createSolution();
         let boardSize = solution.getSize();
         
+        // display puzzle title
+        do NonogramGame.displayTitle();
+        
         // generate constraints from solution (once, stays fixed until win)
         let rowConstraints = Board.getRowConstraints(solution);
         let colConstraints = Board.getColConstraints(solution);
         
-        // create empty player board
-        let board = Board.new(boardSize);
+        // create empty player board (null name - not displayed)
+        let board = Board.new(boardSize, null);
         
         // render the empty board (not solution)
         do GraphicsManager.initRenderBoard(board);
@@ -33,23 +36,43 @@ class NonogramGame {
         return;
     }
     
-    /** Creates the solution board and returns the number of black squares */
+    /** Displays the puzzle title centered at the top of the screen */
+    function void displayTitle() {
+        var String name;
+        var int col;
+        
+        let name = solution.getName();
+        // Center: (64 columns - string length) / 2, row 1 for padding
+        let col = (64 - name.length()) / 2;
+        do Output.moveCursor(1, col);
+        do Output.printString(name);
+        return;
+    }
+    
+    /** Creates the solution board (first time only) and loads the puzzle */
     function int createSolution() {
+        // Create board only on first call
+        let solution = Board.new(10, "Puzzle");
+        return NonogramGame.loadSolution();
+    }
+    
+    /** Loads a puzzle into the existing solution board, returns black square count */
+    function int loadSolution() {
         var int blackCount;
         
-        if (currentPuzzle = 0) { let blackCount = NonogramGame.createHeart(); }
-        if (currentPuzzle = 1) { let blackCount = NonogramGame.createSmiley(); }
-        if (currentPuzzle = 2) { let blackCount = NonogramGame.createCat(); }
-        if (currentPuzzle = 3) { let blackCount = NonogramGame.createSpaceship(); }
+        if (currentPuzzle = 0) { let blackCount = NonogramGame.loadHeart(); }
+        if (currentPuzzle = 1) { let blackCount = NonogramGame.loadSmiley(); }
+        if (currentPuzzle = 2) { let blackCount = NonogramGame.loadCat(); }
+        if (currentPuzzle = 3) { let blackCount = NonogramGame.loadSpaceship(); }
         
         return blackCount;
     }
     
-    /** Heart shape */
-    function int createHeart() {
+    /** Heart shape - loads into existing solution board */
+    function int loadHeart() {
         var int c;
-        let solution = Board.new(10);
         let c = 0;
+        do solution.setName("Heart");
         // Row 0: empty
         // Row 1: ..XX..XX..
         do solution.setSquare(1, 2, 1); let c = c + 1;
@@ -115,11 +138,11 @@ class NonogramGame {
         return c;
     }
     
-    /** Smiley face */
-    function int createSmiley() {
+    /** Smiley face - loads into existing solution board */
+    function int loadSmiley() {
         var int c;
-        let solution = Board.new(10);
         let c = 0;
+        do solution.setName("Smiley");
         // Row 0: ..XXXXXX..
         do solution.setSquare(0, 2, 1); let c = c + 1;
         do solution.setSquare(0, 3, 1); let c = c + 1;
@@ -167,11 +190,11 @@ class NonogramGame {
         return c;
     }
     
-    /** Cat face */
-    function int createCat() {
+    /** Cat face - loads into existing solution board */
+    function int loadCat() {
         var int c;
-        let solution = Board.new(10);
         let c = 0;
+        do solution.setName("Cat");
         // Row 0: X........X (ears)
         do solution.setSquare(0, 0, 1); let c = c + 1;
         do solution.setSquare(0, 9, 1); let c = c + 1;
@@ -233,11 +256,11 @@ class NonogramGame {
         return c;
     }
     
-    /** Spaceship/Rocket */
-    function int createSpaceship() {
+    /** Spaceship/Rocket - loads into existing solution board */
+    function int loadSpaceship() {
         var int c;
-        let solution = Board.new(10);
         let c = 0;
+        do solution.setName("Spaceship");
         // Row 0: ....XX....
         do solution.setSquare(0, 4, 1); let c = c + 1;
         do solution.setSquare(0, 5, 1); let c = c + 1;
@@ -319,6 +342,7 @@ class NonogramGame {
                 if (key = 32)  { do NonogramGame.toggleSquare(); }     // space
                 if (key = 88)  { do NonogramGame.toggleFlag(); }       // X key
                 if (key = 120) { do NonogramGame.toggleFlag(); }       // x key (lowercase)
+                if (key = 83)  { do NonogramGame.skipBoard(); }        // S key (skip)
             }
             let prevKey = key;
         }
@@ -456,18 +480,33 @@ class NonogramGame {
     }
     
     function void handleWin() {
-        // clear any previous message and display success
-        do Output.moveCursor(0, 0);
-        do Output.printString("        ");  // clear old text
-        do Output.moveCursor(0, 0);
+        // display success message on the right side (avoid title area)
+        do Output.moveCursor(0, 55);
         do Output.printString("Success!");
         
         // wait so user can see the message
         do Sys.wait(1000);
         
         // clear the message
-        do Output.moveCursor(0, 0);
+        do Output.moveCursor(0, 55);
         do Output.printString("        ");
+        
+        // transition to next puzzle
+        do NonogramGame.nextPuzzle();
+        return;
+    }
+    
+    /** Skips to the next puzzle (S key) */
+    function void skipBoard() {
+        do NonogramGame.nextPuzzle();
+        return;
+    }
+    
+    /** Transitions to the next puzzle */
+    function void nextPuzzle() {
+        // dispose old constraints before creating new ones
+        do NonogramGame.disposeConstraints(rowConstraints, boardSize);
+        do NonogramGame.disposeConstraints(colConstraints, boardSize);
         
         // move to next puzzle (cycle 0-3)
         let currentPuzzle = currentPuzzle + 1;
@@ -478,8 +517,12 @@ class NonogramGame {
         // clear screen for new puzzle
         do Screen.clearScreen();
         
-        // create new solution
-        let mismatchCount = NonogramGame.createSolution();
+        // clear and reload solution board (reuse existing board)
+        do solution.clear();
+        let mismatchCount = NonogramGame.loadSolution();
+        
+        // display new puzzle title
+        do NonogramGame.displayTitle();
         
         // generate new constraints
         let rowConstraints = Board.getRowConstraints(solution);

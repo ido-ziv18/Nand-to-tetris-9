@@ -2,12 +2,23 @@ class Board {
     // Square states: 0 = white, 1 = black, 2 = flagged (X mark)
     field Array board;
     field int size;
+    field String name;
     
-    constructor Board new(int asize) {
+    constructor Board new(int asize, String boardName) {
         let size = asize;
+        let name = boardName;
         let board = Array.new(size);
         do createBoard();
         return this;
+    }
+    
+    method String getName() {
+        return name;
+    }
+    
+    method void setName(String newName) {
+        let name = newName;
+        return;
     }
 
     method void createBoard() {
@@ -79,6 +90,7 @@ class Board {
         var int rowIndex;
         var Array row;
         
+        // dispose each row array
         let rowIndex = 0;
         while (rowIndex < size) {
             let row = board[rowIndex];
@@ -86,6 +98,10 @@ class Board {
             let rowIndex = rowIndex + 1;
         }
         
+        // dispose the outer board array
+        do Memory.deAlloc(board);
+        
+        // dispose this object
         do Memory.deAlloc(this);
         return;
     }
