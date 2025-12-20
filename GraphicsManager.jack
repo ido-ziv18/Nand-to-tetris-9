@@ -13,6 +13,11 @@ class GraphicsManager {
         let squareSize = gridSize / size;
         let topY = 245 - gridSize;
         let leftX = 256 - ((size / 2) * squareSize);
+        
+        // Dispose old gridOrigin if it exists (safety check)
+        if (~(gridOrigin = null)) {
+            do gridOrigin.dispose();
+        }
         let gridOrigin = Point.new(leftX, topY);
         do GraphicsManager.initGrid(board);
 
