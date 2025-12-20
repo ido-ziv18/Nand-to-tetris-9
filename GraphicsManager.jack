@@ -11,7 +11,7 @@ class GraphicsManager {
         let gridSize = 140; //fixed grid dimensions
         let size = board.getSize();
         let squareSize = gridSize / size;
-        let topY = 245 - gridSize;
+        let topY = 235 - gridSize;  // moved up slightly to fit better with border
         let leftX = 256 - ((size / 2) * squareSize);
         
         // Dispose old gridOrigin if it exists (safety check)
@@ -301,6 +301,24 @@ class GraphicsManager {
     function void renderAllConstraints(Array rowConstraints, Array colConstraints, int boardSize) {
         do GraphicsManager.renderRowConstraints(rowConstraints, boardSize);
         do GraphicsManager.renderColConstraints(colConstraints, boardSize);
+        return;
+    }
+    
+    /** Draws a decorative border around the screen */
+    function void drawBorder() {
+        do Screen.setColor(true);
+        // Top border (double line)
+        do Screen.drawRectangle(4, 4, 507, 6);
+        do Screen.drawRectangle(4, 9, 507, 11);
+        // Bottom border (double line)
+        do Screen.drawRectangle(4, 244, 507, 246);
+        do Screen.drawRectangle(4, 249, 507, 251);
+        // Left border (double line)
+        do Screen.drawRectangle(4, 4, 6, 251);
+        do Screen.drawRectangle(9, 4, 11, 251);
+        // Right border (double line)
+        do Screen.drawRectangle(505, 4, 507, 251);
+        do Screen.drawRectangle(500, 4, 502, 251);
         return;
     }
     
