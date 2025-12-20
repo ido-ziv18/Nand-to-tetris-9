@@ -8,7 +8,7 @@ class TitleScreen {
         var int loopCount;
         
         do Screen.clearScreen();
-        do TitleScreen.drawBorder();
+        do GraphicsManager.drawBorder();
         do TitleScreen.drawLogo();
         do TitleScreen.drawInstructions();
         
@@ -35,24 +35,6 @@ class TitleScreen {
         }
         
         do Screen.clearScreen();
-        return;
-    }
-    
-    /** Draws a decorative border around the screen */
-    function void drawBorder() {
-        do Screen.setColor(true);
-        // Top border (double line)
-        do Screen.drawRectangle(4, 4, 507, 6);
-        do Screen.drawRectangle(4, 9, 507, 11);
-        // Bottom border (double line)
-        do Screen.drawRectangle(4, 244, 507, 246);
-        do Screen.drawRectangle(4, 249, 507, 251);
-        // Left border (double line)
-        do Screen.drawRectangle(4, 4, 6, 251);
-        do Screen.drawRectangle(9, 4, 11, 251);
-        // Right border (double line)
-        do Screen.drawRectangle(505, 4, 507, 251);
-        do Screen.drawRectangle(500, 4, 502, 251);
         return;
     }
     

@@ -13,7 +13,8 @@ class NonogramGame {
         let mismatchCount = NonogramGame.createSolution();
         let boardSize = solution.getSize();
         
-        // display puzzle title
+        // draw border and display puzzle title
+        do GraphicsManager.drawBorder();
         do NonogramGame.displayTitle();
         
         // generate constraints from solution (once, stays fixed until win)
@@ -42,9 +43,9 @@ class NonogramGame {
         var int col;
         
         let name = solution.getName();
-        // Center: (64 columns - string length) / 2, row 1 for padding
+        // Center: (64 columns - string length) / 2, row 2 to be below border
         let col = (64 - name.length()) / 2;
-        do Output.moveCursor(1, col);
+        do Output.moveCursor(2, col);
         do Output.printString(name);
         return;
     }
@@ -522,7 +523,8 @@ class NonogramGame {
         do solution.clear();
         let mismatchCount = NonogramGame.loadSolution();
         
-        // display new puzzle title
+        // draw border and display new puzzle title
+        do GraphicsManager.drawBorder();
         do NonogramGame.displayTitle();
         
         // generate new constraints
